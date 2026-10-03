@@ -29,10 +29,10 @@ Then it measures the real gap between the agent and a single-shot baseline on a 
 
 | Metric | Value |
 | --- | --- |
-| Task pass rate (agent / baseline) | **<!--BENCH_AGENT--> / <!--BENCH_BASELINE-->** |
-| Average steps | <!--BENCH_STEPS--> |
-| Prompt cache hit ratio | <!--BENCH_CACHE--> |
-| Unit tests | 101 passing (offline, no key) |
+| Task pass rate (agent / baseline) | **6/6 (t6 re-run after fix) / 6/6** |
+| Average steps | 8.5 |
+| Prompt cache hit ratio | 94.2% |
+| Unit tests | 102 passing (offline, no key) |
 | Runtime dependencies | **0** |
 
 ## Quick start
@@ -44,6 +44,8 @@ node src/cli.js selftest        # offline self-check, no network, no key
 node src/cli.js demo            # real task: optimize the O(n²) dedupe in demo/
 node src/cli.js bench --list    # list benchmark tasks
 node src/cli.js bench           # run the full benchmark (needs DEEPSEEK_API_KEY)
+# official run (matches docs/report.md):
+# node src/cli.js bench --model deepseek-v4-pro --effort max --timeout 900000
 ```
 
 The API key is resolved automatically from, in order: the `DEEPSEEK_API_KEY`

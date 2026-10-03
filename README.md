@@ -31,10 +31,10 @@
 
 | 指标 | 结果 |
 | --- | --- |
-| 任务通过率（Agent / 单发基线） | **<!--BENCH_AGENT--> / <!--BENCH_BASELINE-->** |
-| 平均步数 | <!--BENCH_STEPS--> |
-| prompt 缓存命中率 | <!--BENCH_CACHE--> |
-| 单元测试 | 101 个全绿（离线、无 Key） |
+| 任务通过率（Agent / 单发基线） | **6/6（t6 修复后复跑） / 6/6** |
+| 平均步数 | 8.5 |
+| prompt 缓存命中率 | 94.2% |
+| 单元测试 | 102 个全绿（离线、无 Key） |
 | 运行时依赖 | **0** |
 
 <!-- 上表数字由评测自动生成于 docs/report.md，两者保持一致 -->
@@ -48,6 +48,8 @@ node src/cli.js selftest        # 离线自检：不联网、不需要 Key，7 �
 node src/cli.js demo            # 真实任务：让 Agent 优化 demo 里 O(n²) 的去重函数
 node src/cli.js bench --list    # 列出评测任务
 node src/cli.js bench           # 跑全部评测（需要 DEEPSEEK_API_KEY）
+# 正式评测（与 docs/report.md 一致，谷时价更低）：
+# node src/cli.js bench --model deepseek-v4-pro --effort max --timeout 900000
 ```
 
 API Key 三选一（程序自动按顺序找）：

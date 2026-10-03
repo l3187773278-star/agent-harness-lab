@@ -140,6 +140,53 @@ test('runAgent：参数不是合法 JSON 的调用被隔离，循环继续且 in
   assert.equal(res.stopReason, 'finished');
 });
 
+test('runAgent：无效调用也要进 assistant.tool_calls 并有对应 tool 响应（t6 400 回归）', async () => {
+  const root = makeWorkspace({ 'a.js': 'ok\n' });
+  const requests = [];
+
+  const provider = providerFromTurns(
+    [
+      {
+        // 同一批里一个合法调用 + 一个坏 JSON 调用（带真实 id）
+        toolCalls: [
+          { name: 'read_file', args: { path: 'a.js' } },
+          { name: 'read_file', argsRaw: '{"path":"a.js' },
+        ],
+        finishReason: 'tool_calls',
+      },
+      { toolCalls: [{ name: 'finish', args: { summary: '完成' } }], finishReason: 'tool_calls' },
+    ],
+    { onRequest: (body) => requests.push(body) },
+  );
+
+  const res = await runAgent({
+    provider,
+    toolbox: new ToolBox({ root }),
+    task: '读 a.js 然后结束',
+    trace: quietTrace(),
+  });
+
+  assert.equal(res.invalidCalls, 1);
+  assert.equal(res.ok, true);
+
+  // 第二次请求（坏调用之后的下一轮）必须符合协议：assistant 的每个 tool_call 都有 tool 响应
+  const second = requests[1];
+  assert.ok(second, '应有第二次请求');
+  const assistant = second.messages.find((m) => m.role === 'assistant' && Array.isArray(m.tool_calls));
+  assert.ok(assistant, '第二次请求应包含带 tool_calls 的 assistant 消息');
+  const ids = assistant.tool_calls.map((t) => t.id);
+  assert.ok(ids.includes('call_0_0'), '合法调用的 id 应在 tool_calls 里');
+  assert.ok(ids.includes('call_0_1'), '无效调用的 id 也必须在 tool_calls 里（否则孤儿 tool 消息 → 400）');
+
+  const toolIds = second.messages.filter((m) => m.role === 'tool').map((m) => m.tool_call_id);
+  for (const id of ids) {
+    assert.ok(toolIds.includes(id), `tool_call ${id} 必须有对应 tool 响应`);
+  }
+  // 无效调用的回灌内容必须是错误反馈
+  const badResponse = second.messages.find((m) => m.role === 'tool' && m.tool_call_id === 'call_0_1');
+  assert.match(badResponse.content, /INVALID_ARGS_JSON/);
+});
+
 test('runAgent：同一个调用重复达到上限时主动打断，避免无限烧 token', async () => {
   const root = makeWorkspace({ 'a.js': 'x\n' });
   const repeated = { toolCalls: [{ name: 'read_file', args: { path: 'a.js' } }], finishReason: 'tool_calls' };

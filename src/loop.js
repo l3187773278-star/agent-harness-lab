@@ -255,15 +255,30 @@ export async function runAgent(opts) {
       truncated: response.truncated,
     });
 
-    // 3) 把 assistant 这一步完整记入历史（含它请求的工具调用）
+    // 3) 把 assistant 这一步完整记入历史（含它请求的工具调用）。
+    //    无效调用也必须进 assistant 的 tool_calls：OpenAI 兼容协议要求每个
+    //    tool_call 后面都要有对应的 tool 响应。若这里只记 validCalls，坏调用的
+    //    错误回灌就会变成「没有对应 tool_call 的孤儿 tool 消息」，接口直接 400
+    //    （t6-daterange 评测中真实触发过：invalid_request_error）。
+    const allCalls = [
+      ...validCalls.map((c) => ({ id: c.id, name: c.name, args: c.args, argsRaw: c.argsText })),
+      ...badCalls.map((bad) => ({
+        id: bad.id || `invalid_${bad.index}`,
+        name: bad.name || 'unknown',
+        args: {},
+        argsRaw: bad.argsText || '',
+      })),
+    ];
     history.push({
       role: 'assistant',
       content: response.content || '',
       reasoning: response.reasoning || '',
-      toolCalls: validCalls.map((c) => ({ id: c.id, name: c.name, args: c.args, argsRaw: c.argsText })),
+      toolCalls: allCalls,
     });
 
-    // 4) 处理坏调用：作为错误反馈回灌，让模型自我修正
+    // 4) 处理坏调用：作为错误反馈回灌，让模型自我修正。
+    //    toolCallId 必须与上面 assistant.tool_calls 里的 id 完全一致（同一表达式），
+    //    否则还是会产生孤儿 tool 消息。
     if (badCalls.length > 0) {
       for (const bad of badCalls) {
         history.push({

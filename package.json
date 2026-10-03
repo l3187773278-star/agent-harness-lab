@@ -15,7 +15,7 @@
     "start": "node src/cli.js",
     "run": "node src/cli.js run",
     "bench": "node src/cli.js bench",
-    "test": "node --test \"test/*.test.js\"",
+    "test": "node --test test/config.test.js test/recorder.test.js test/sse.test.js test/tools.test.js test/loop.test.js test/provider.test.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "check": "node --check src/cli.js && node --check src/config.js && node --check src/provider.js && node --check src/sse.js && node --check src/loop.js && node --check src/context.js && node --check src/tools.js && node --check src/trace.js && node --check src/recorder.js"

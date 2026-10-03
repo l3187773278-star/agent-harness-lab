@@ -1,0 +1,9 @@
+{
+  "id": "t1-truncate",
+  "title": "修复 truncate 的省略号长度越界",
+  "difficulty": "easy",
+  "prompt": "工作区里是一个文本工具库 src/text.js，它自带的测试在 test/ 下。\n\n请完成：\n1. 读 src/text.js，理解 truncate 函数的契约（函数上方注释里写了完整契约）。\n2. 当前实现违反了契约：返回值长度会超过 maxLength，且边界语义不对。请修复，使其完全符合注释里的契约。\n   特别注意契约里的退化情况：上限为 0、上限为 1、自定义省略号长度**大于或等于**上限（包括恰好相等）时，都应退化为纯截断、不补省略号。\n3. 用 node --test 跑通 test/ 下的测试（等价写法：node --test \"test/*.test.js\"）。\n4. 确认 pad 函数行为不受影响。\n5. 调用 finish 汇报改动与测试结果。\n\n要求：只改必要的逻辑，不要删除或改写测试来让它们通过。",
+  "graderFiles": ["text.grader.test.js"],
+  "graderTarget": "test/__grader__.test.js",
+  "tag": "单文件修复"
+}

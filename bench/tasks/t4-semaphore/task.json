@@ -1,0 +1,9 @@
+{
+  "id": "t4-semaphore",
+  "title": "修复异步信号量的并发超限与许可不归还",
+  "difficulty": "hard",
+  "prompt": "工作区里是一个异步信号量实现 src/semaphore.js，自带测试在 test/ 下。这个类用来限制同时进行的异步操作数量。\n\n请完成：\n1. 读 src/semaphore.js 与 test/semaphore.test.js，弄清它对外承诺的语义：acquire 排队、release 唤醒、run 自动获取与释放。\n2. 现在存在并发缺陷：多个任务同时等待时，只要有人释放许可，**所有**等待者都会同时涌入临界区，实际并发数远超 limit。请找出根因并修复。\n   提示：仔细看 release() 在存在等待者时做了几次唤醒。许可每次释放只有一份，正确做法应该是只唤醒队首的那一个等待者。\n3. 修复后请确认：limit 个并发上限在大量任务同时请求时依然成立；等待者按先来后到的顺序获得许可；run() 在被包裹函数抛异常时依然会释放许可（否则后续任务会被永久阻塞）。\n4. 用 node --test 跑通测试（等价写法：node --test \"test/*.test.js\"）。\n5. 请在 finish 里说明：根因是什么、你的修法为什么能保证「一次释放最多唤醒一个等待者」、以及 FIFO 顺序是如何保证的。\n\n要求：不要改成忽略 limit（例如直接串行执行所有任务）来让测试通过 —— 必须真正实现 limit 个并发。不要删除或改写测试。",
+  "graderFiles": ["semaphore.grader.test.js"],
+  "graderTarget": "test/__grader__.test.js",
+  "tag": "并发竞态修复"
+}

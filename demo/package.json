@@ -1,0 +1,9 @@
+{
+  "name": "ahl-demo-workspace",
+  "private": true,
+  "type": "module",
+  "description": "agent-harness-lab 的示例工作区：一个带性能问题的去重工具库，供 Agent 优化练习。",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

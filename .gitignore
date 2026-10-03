@@ -1,0 +1,8 @@
+node_modules/
+bench/workspaces/
+bench/fixtures/
+bench/results/
+coverage/
+.env.local
+*.log
+trace/*.jsonl

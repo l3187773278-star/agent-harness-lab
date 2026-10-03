@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 使用 Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: 零运行时依赖断言
+        run: |
+          node -e "
+          const p = require('./package.json');
+          const deps = Object.keys(p.dependencies || {});
+          if (deps.length) {
+            console.error('运行时依赖必须为空，实际发现: ' + deps.join(', '));
+            process.exit(1);
+          }
+          console.log('ok: dependencies 为空');
+          "
+
+      - name: 安装开发期依赖
+        run: npm install --no-audit --no-fund
+
+      - name: 语法检查
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: 离线测试（不依赖网络与 API Key）
+        run: npm test
+
+      - name: 离线自检（验证各层接线）
+        run: node src/cli.js selftest
+
+      - name: 评测流水线冒烟（假 Provider，不联网）
+        run: node bench/smoke.mjs
+
+      - name: 评测集双向验证（种子必须被抓、参考解法必须过）
+        run: node bench/reference-solutions.mjs

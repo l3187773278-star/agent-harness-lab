@@ -1,0 +1,5 @@
+{
+  "name": "bench-task-t2-lru",
+  "private": true,
+  "type": "module"
+}

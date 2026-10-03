@@ -1,0 +1,9 @@
+{
+  "id": "t3-idgen",
+  "title": "修复短 ID 生成器在同一毫秒内碰撞",
+  "difficulty": "medium",
+  "prompt": "工作区里是一个短 ID 生成器 src/idgen.js，自带测试在 test/ 下。\n\n请完成：\n1. 读 src/idgen.js 与 test/idgen.test.js，理解 nextId 承诺的契约（函数上方注释）。\n2. 这个实现在「同一毫秒内连续调用」时会生成重复 ID，违反了契约。请找出根因并修复。\n   注意：不要靠 sleep 或随机数掩盖问题 —— 随机数只是降低概率，不是保证唯一。要用确定性手段保证同一毫秒内不重复。\n3. 用 node --test 跑通测试（等价写法：node --test \"test/*.test.js\"）。\n4. 额外说明：如果你引入了计数器，请想清楚计数器溢出或时钟回拨时会发生什么，并在 finish 里说明你的处理方式。\n5. 调用 finish 汇报根因、修法与测试结果。\n\n要求：保持返回值字符集为 [0-9a-z-]；不要删除或改写测试来让它们通过。",
+  "graderFiles": ["idgen.grader.test.js"],
+  "graderTarget": "test/__grader__.test.js",
+  "tag": "单文件修复·唯一性"
+}

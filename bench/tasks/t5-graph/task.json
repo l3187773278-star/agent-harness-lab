@@ -1,0 +1,9 @@
+{
+  "id": "t5-graph",
+  "title": "修复拓扑排序的环检测误报与漏报",
+  "difficulty": "hard",
+  "prompt": "工作区里是一个有向图拓扑排序实现 src/topo.js，自带测试在 test/ 下。\n\n请完成：\n1. 读 src/topo.js 与 test/topo.test.js，理解 topoSort 的契约（函数上方注释里写了完整契约）。\n2. 当前实现的环检测是错的：它用「整轮没有任何节点被放置」来判断有环，这既会误报（无环图里某个节点被多个前驱阻塞时）也会漏报（自环、以及环上成员报告不完整）。请修复。\n   要点：(a) 用正规的环检测算法（如 DFS 三色标记或 Kahn 算法剩余节点）；(b) err.cycle 要给出**真正在环上**的节点；(c) 自环 A→A 必须被识别；(d) 依赖指向图外未知节点要抛错并在信息里带上该节点名。\n3. 用 node --test 跑通测试（等价写法：node --test \"test/*.test.js\"）。\n4. finish 里请说明：原实现在什么情况下会误报、什么情况下会漏报，你换成了什么算法，复杂度是多少。\n\n要求：不要删除或改写测试来让它们通过。",
+  "graderFiles": ["topo.grader.test.js"],
+  "graderTarget": "test/__grader__.test.js",
+  "tag": "算法修复·环检测"
+}

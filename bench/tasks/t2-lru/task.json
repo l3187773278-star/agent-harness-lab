@@ -1,0 +1,9 @@
+{
+  "id": "t2-lru",
+  "title": "修复 LRU 缓存未刷新使用顺序导致淘汰错误",
+  "difficulty": "medium",
+  "prompt": "工作区里是一个定容 LRU 缓存实现 src/lru.js，自带测试在 test/ 下。\n\n请完成：\n1. 读 src/lru.js 与 test/lru.test.js，弄清这个缓存对外承诺的行为。\n2. 现在有一个行为缺陷：读取已存在的键之后，淘汰顺序不正确。请找出并修复，使 get/set/keys 的顺序语义自洽。\n3. 用 node --test 跑通测试（等价写法：node --test \"test/*.test.js\"）。\n4. 另外请确认：命中与未命中的统计（hits/misses）在修复后依然正确。\n5. 调用 finish 汇报你改了什么、为什么这样改、测试结果如何。\n\n要求：保持构造函数对容量的校验行为不变；不要删除或改写测试来让它们通过。",
+  "graderFiles": ["lru.grader.test.js"],
+  "graderTarget": "test/__grader__.test.js",
+  "tag": "单文件修复·顺序语义"
+}

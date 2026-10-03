@@ -1,0 +1,5 @@
+{
+  "name": "bench-task-t5-graph",
+  "private": true,
+  "type": "module"
+}

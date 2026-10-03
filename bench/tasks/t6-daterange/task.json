@@ -1,0 +1,9 @@
+{
+  "id": "t6-daterange",
+  "title": "修复日期区间在非 UTC 时区下的错位",
+  "difficulty": "medium",
+  "prompt": "工作区里是一个日期区间工具 src/daterange.js，自带测试在 test/ 下。\n\n请完成：\n1. 读 src/daterange.js 与 test/daterange.test.js，理解 dayRange / isWithin / formatRange 的语义。\n2. 现在存在一个时区缺陷：本机时区是 UTC+8，dayRange 返回的区间与「当地这一天」不一致，导致当地凌晨和深夜的时刻被算到了相邻日期。请找出根因并修复。\n   提示：注意 toISOString() 返回的是 UTC 表示，而 new Date(y, m, d) 构造的是本地时间 —— 混用两者会错位。\n   修复后要求：区间起点是当地当天 00:00:00.000，终点是当地当天 23:59:59.999，长度恰好 24 小时减 1 毫秒。\n3. 同时检查 formatRange 是否有同样的时区问题，并修复。\n4. 用 node --test 跑通测试（等价写法：node --test \"test/*.test.js\"）。\n5. finish 里请说明：根因是什么、你为什么选择「用本地时间构造」而不是「用 UTC 构造」，以及两者在跨时区部署时的差异。\n\n要求：不要删除或改写测试来让它们通过。不要通过读取环境变量里的时区或硬编码 +8 来绕过问题 —— 实现必须在任意时区下都正确。",
+  "graderFiles": ["daterange.grader.test.js"],
+  "graderTarget": "test/__grader__.test.js",
+  "tag": "时区缺陷修复"
+}

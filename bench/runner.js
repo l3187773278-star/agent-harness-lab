@@ -26,6 +26,15 @@ const TASK_TIMEOUT_MS = 12 * 60_000;
 const GRADER_TIMEOUT_MS = 120_000;
 
 /**
+ * 判分进程固定时区。
+ *
+ * t6-daterange 的任务语义与时区强相关：种子缺陷（用 UTC 取日期）只在非 UTC 时区下显现。
+ * 若判分进程跟随宿主机时区，CI runner（默认 UTC）会连种子缺陷都抓不到，
+ * 判分器被误判成「接线有误」。固定为项目文档声明的环境时区，保证本机与 CI 结果一致。
+ */
+const GRADER_TZ = 'Asia/Shanghai';
+
+/**
  * 深度递归复制目录。
  */
 export function copyTree(src, dest) {
@@ -81,6 +90,7 @@ export function runGrader(workspace, taskInfo) {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
       timeout: GRADER_TIMEOUT_MS,
+      env: { ...process.env, TZ: GRADER_TZ },
     });
     return { pass: true, durationMs: Date.now() - started, output: tail(out) };
   } catch (err) {
@@ -394,7 +404,7 @@ export async function runBenchmark(opts) {
 }
 
 /**
- * 把报告渲染成人可读的 Markdown（简历与 README 引用的数字出处）。
+ * 把报告渲染成人可读的 Markdown（README 与正式报告引用的数字出处）。
  */
 export function renderMarkdown(report) {
   const lines = [];

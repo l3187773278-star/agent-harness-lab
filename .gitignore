@@ -4,5 +4,8 @@ bench/fixtures/
 bench/results/
 coverage/
 .env.local
+# 内部交接文档：只在本地保留，不进仓库
+HANDOFF.md
+
 *.log
 trace/*.jsonl

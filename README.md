@@ -48,7 +48,7 @@ node src/cli.js selftest        # 离线自检：不联网、不需要 Key，7 �
 node src/cli.js demo            # 真实任务：让 Agent 优化 demo 里 O(n²) 的去重函数
 node src/cli.js bench --list    # 列出评测任务
 node src/cli.js bench           # 跑全部评测（需要 DEEPSEEK_API_KEY）
-# 正式评测（与 docs/report.md 一致，谷时价更低）：
+# 正式评测（与 docs/report.md 一致；--timeout 要放宽到 v4-pro 的思考时间之上）：
 # node src/cli.js bench --model deepseek-v4-pro --effort max --timeout 900000
 ```
 

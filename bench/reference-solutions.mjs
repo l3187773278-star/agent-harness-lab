@@ -363,11 +363,13 @@ function copyDir(src, dest) {
 
 function runTests(dir) {
   try {
+    // 与 bench/runner.js 的判分保持一致：固定时区，t6 的时区语义才可复现（CI runner 默认 UTC）。
     const out = execFileSync(process.execPath, ['--test'], {
       cwd: dir,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
       timeout: 120_000,
+      env: { ...process.env, TZ: 'Asia/Shanghai' },
     });
     return { ok: true, out };
   } catch (err) {

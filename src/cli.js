@@ -37,6 +37,7 @@ export const USAGE = `agent-harness-lab v${VERSION} —— 从零手写的 AI Ag
   --workspace <目录>   任务所在的工作区（默认：当前目录）
   --model <名称>       模型名（默认 deepseek-flash；可指定 deepseek-v4-pro）
   --effort <档位>      推理强度 low / high / max（deepseek-v4-pro 支持）
+  --timeout <ms>       单次请求超时毫秒数（默认 120000；deepseek-v4-pro 加 effort=max 建议 ≥ 600000）
   --max-steps <n>      最大步数（默认 ${DEFAULT_LOOP_LIMITS.maxSteps}）
   --budget <n>         单次请求的 prompt token 预算（默认 ${DEFAULT_LOOP_LIMITS.maxPromptTokens}）
   --inject <工具:次数> 注入故障，可重复，例如 --inject run_command:1
@@ -61,7 +62,7 @@ export const USAGE = `agent-harness-lab v${VERSION} —— 从零手写的 AI Ag
  */
 export function parseArgs(argv) {
   const args = { _: [], inject: [], quiet: false, json: false, list: false, noBaseline: false };
-  const takesValue = new Set(['workspace', 'model', 'max-steps', 'budget', 'trace', 'inject', 'base-url', 'effort']);
+  const takesValue = new Set(['workspace', 'model', 'max-steps', 'budget', 'trace', 'inject', 'base-url', 'effort', 'timeout']);
 
   for (let i = 0; i < argv.length; i++) {
     const token = argv[i];
@@ -173,7 +174,7 @@ function demoTask() {
 }
 
 async function cmdRun(args, { taskOverride = null, useDemoWorkspace = false } = {}) {
-  const config = loadConfig({ model: args.model }, { cwd: PROJECT_ROOT });
+  const config = loadConfig({ model: args.model, timeoutMs: args.timeout }, { cwd: PROJECT_ROOT });
   const opts = buildRunOptions(
     useDemoWorkspace ? { ...args, workspace: path.join(PROJECT_ROOT, 'demo') } : args,
     config,
@@ -333,7 +334,7 @@ async function cmdSelftest(args) {
 }
 
 async function cmdBench(args) {
-  const config = loadConfig({ model: args.model }, { cwd: PROJECT_ROOT });
+  const config = loadConfig({ model: args.model, timeoutMs: args.timeout }, { cwd: PROJECT_ROOT });
   const { runBenchmark, loadTasks } = await import('../bench/runner.js');
 
   if (args.list) {

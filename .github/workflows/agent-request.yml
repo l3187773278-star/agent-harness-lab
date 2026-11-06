@@ -1,0 +1,25 @@
+name: agent-request
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to comment on
+        required: true
+        default: "1"
+      request:
+        description: Request text (without the @mention)
+        required: true
+permissions:
+  issues: write
+  contents: read
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post request comment as github-actions bot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ inputs.issue }}
+          REQ: ${{ inputs.request }}
+        run: |
+          gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body "@l3187773278-star $REQ"

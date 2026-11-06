@@ -1,3 +1,3 @@
 # Typo demo
 
-This sentance has serveral delibrate typos: teh quick brown fox jumps over teh lazy dog.
+This sentence has several deliberate typos: the quick brown fox jumps over the lazy dog.
